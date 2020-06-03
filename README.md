@@ -10,7 +10,7 @@ We used the 100 vertebrate species amino acid alignments (100way project) from t
 From the database we have a total of **201,663** exons (201663) (of the longest isoform).
 
 The file "knownCanonical.exonAA.fa.gz" was retrieved from [UCSC](http://hgdownload.cse.ucsc.edu/goldenpath/hg19/multiz100way/alignments/) and exons were split in singular fasta files using a bash script.
-[description](http://genome.ucsc.edu/cgi-bin/hgTrackUi?db=hg19&g=cons100way)
+The description of how the orthology was conducted for the 100-way alignment project is found [here](http://genome.ucsc.edu/cgi-bin/hgTrackUi?db=hg19&g=cons100way).
 ``` bash
 #!/bin/bash
 i=1
@@ -24,6 +24,7 @@ else
 fi
 done < knownCanonical.exonAA.fa
 ``` 
+Exons were further parsed in order to have headers matching with species tree headers. Exons belonging to the same gene were combined into a singular fasta file. This gave us a total of **21,678** genes to work with.
 
 
 Downloading the Refseq protein sequences from NCBI
