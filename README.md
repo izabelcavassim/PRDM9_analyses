@@ -11,6 +11,7 @@ We imposed that exons with with a minimum threshold of sequence completeness of 
 The files "knownCanonical.exonAA.fa.gz" and "knownCanonical.exonNuc" were downloaded from [UCSC repository](http://hgdownload.cse.ucsc.edu/goldenpath/hg19/multiz100way/alignments/) and exons were split in singular fasta files using a bash script.
 
 ``` bash
+# Canonical aminoacid sequences
 #!/bin/bash
 i=1
 fileName="gene_$i.fasta"
@@ -22,6 +23,20 @@ else
  echo $line >> "$fileName"
 fi
 done < knownCanonical.exonAA.fa
+
+# Canonical nucleotide sequences
+#!/bin/bash
+i=1
+fileName="gene_$i.fasta"
+while read line ; do 
+if [ "$line"  == ""  ] ; then
+ ((++i))
+ fileName="gene_$i.fasta"
+else
+ echo $line >> "$fileName"
+fi
+done < knownCanonical.exonNuc.fa
+
 ``` 
 Exons were further parsed in order to have headers matching with the species tree headers (for that we used a metadata file scripts/metadata2.csv). Exons belonging to the same gene were combined into a singular fasta file using the script parsing_UCSC_data.py. This gave us a total of **21,678** genes to work with.
 
