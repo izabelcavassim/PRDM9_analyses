@@ -42,7 +42,18 @@ Exons were further parsed in order to have headers matching with the species tre
 
 Downloading the Refseq protein sequences from NCBI
 -----------------------------
-First downloaded the species present in each of the vertabrates directories:
+First downloaded the species present in each of the vertabrates directories.
+Extra_genomes_02_06_20_mammalian_vertebrates.txt contain the species and the directory of interest:
+
+```
+Acinonyx_jubatus/latest_assembly_versions/
+Ailuropoda_melanoleuca/latest_assembly_versions/
+Aotus_nancymaae/latest_assembly_versions/
+Arvicanthis_niloticus/latest_assembly_versions/
+.
+.
+.
+```
 
 ``` bash
 # Mammalian vertebrate species
