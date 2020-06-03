@@ -20,12 +20,12 @@ cat Extra_genomes_02_06_20_mammalian_vertebrates.txt | while read p;
 done
 
 # Other vertebrate species
-cat Extra_genomes_02_06_20_mammalian_vertebrates.txt | while read p;
+cat Extra_genomes_02_06_20_other_vertebrates.txt | while read p;
   do   
-  lftp -e "cls -1 > /tmp/list; exit" ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/"${p}"
+  lftp -e "cls -1 > /tmp/list; exit" ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/"${p}"
   read -r  firstline< /tmp/list
   echo $firstline
-  wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/"${p}""${firstline::-1}"/"${firstline::-1}_protein.faa.gz"
+  wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/"${p}""${firstline::-1}"/"${firstline::-1}_protein.faa.gz"
   mv ${firstline::-1}_protein.faa.gz ${p%%/*}_protein.faa.gz  
 done
 ```
