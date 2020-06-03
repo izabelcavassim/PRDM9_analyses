@@ -38,7 +38,7 @@ fi
 done < knownCanonical.exonNuc.fa
 
 ``` 
-Exons were further parsed in order to have headers matching with the species tree headers (for that we used a metadata file scripts/metadata2.csv). Exons belonging to the same gene were combined into a singular fasta file using the script scripts/parsing_UCSC_data.py. This gave us a total of **21,678** genes to work with.
+Exons were further parsed in order to have headers matching with the species tree headers (for that we used a metadata file scripts/metadata2.csv). Exons belonging to the same gene were combined into a singular fasta file using the script scripts/parsing_UCSC_data.py. This gave us a total of **21,521** genes to work with.
 
 Downloading the Refseq protein sequences from NCBI
 -----------------------------
