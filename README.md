@@ -7,7 +7,7 @@ Retrieving 100-way alignment sequences from UCSC
 -----------------------------
 We used the 100 vertebrate species amino acid alignments (100way project) from the multiz alignment available at the UCSC genome browser (Blanchette et al., 2004; Harris, 2007), gene alignments with a minimum number of species (completeness) will be defined for this study. 
 
-From the database we have a total of **201,663** exons (201663) (of the longest isoform).
+From the database we have a total of **201,663** exons (of the longest isoform).
 
 The file "knownCanonical.exonAA.fa.gz" was retrieved from [UCSC](http://hgdownload.cse.ucsc.edu/goldenpath/hg19/multiz100way/alignments/) and exons were split in singular fasta files using a bash script.
 The description of how the orthology was conducted for the 100-way alignment project is found [here](http://genome.ucsc.edu/cgi-bin/hgTrackUi?db=hg19&g=cons100way).
@@ -24,8 +24,7 @@ else
 fi
 done < knownCanonical.exonAA.fa
 ``` 
-Exons were further parsed in order to have headers matching with species tree headers. Exons belonging to the same gene were combined into a singular fasta file. This gave us a total of **21,678** genes to work with.
-
+Exons were further parsed in order to have headers matching with species tree headers. Exons belonging to the same gene were combined into a singular fasta file using the script parsing_UCSC_data.py. This gave us a total of **21,678** genes to work with.
 
 Downloading the Refseq protein sequences from NCBI
 -----------------------------
