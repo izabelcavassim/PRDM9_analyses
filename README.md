@@ -5,12 +5,11 @@ This repository was created to outline the analyses described in the paper Cavas
 
 Retrieving 100-way alignment sequences from UCSC
 -----------------------------
-We used the 100 vertebrate species amino acid alignments (100way project) from the multiz alignment available at the UCSC genome browser (Blanchette et al., 2004; Harris, 2007), gene alignments with a minimum number of species (completeness) will be defined for this study. 
-
-From the database we have a total of **201,663** exons (of the longest isoform).
+We used the 100 vertebrate species amino acid alignments (100way project) from the multiz alignment available at the UCSC genome browser (Blanchette et al., 2004; Harris, 2007). The description of how the orthology was conducted for the 100-way alignment project is found [here](http://genome.ucsc.edu/cgi-bin/hgTrackUi?db=hg19&g=cons100way).
+Gene alignments with a minimum threshold of sequence completeness was imposed (20%). From the UCSC database we have a total of **201,663** exons (of the longest isoform).
 
 The file "knownCanonical.exonAA.fa.gz" was retrieved from [UCSC](http://hgdownload.cse.ucsc.edu/goldenpath/hg19/multiz100way/alignments/) and exons were split in singular fasta files using a bash script.
-The description of how the orthology was conducted for the 100-way alignment project is found [here](http://genome.ucsc.edu/cgi-bin/hgTrackUi?db=hg19&g=cons100way).
+
 ``` bash
 #!/bin/bash
 i=1
