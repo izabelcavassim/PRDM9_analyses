@@ -3,6 +3,11 @@ Introduction
 
 This repository was created to outline the analyses described in the paper Cavassim et al., 2020 of which we extracted all the RefSeq data available and searched for genes coevolving with PRDM9.
 
+Extracting 100-way alignment sequences
+-----------------------------
+We used the 100 vertebrate species amino acid alignments (100way project) from the multiz alignment available at the UCSC genome browser (Blanchette et al., 2004; Harris, 2007), gene alignments with a minimum number of species (completeness) will be defined for this study. 
+
+From the database we have a total of **201,663** exons (201663) (of the longest isoform).
 
 Downloading the Refseq protein sequences from NCBI
 -----------------------------
