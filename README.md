@@ -76,3 +76,7 @@ cat Extra_genomes_02_06_20_other_vertebrates.txt | while read p;
   mv ${firstline::-1}_protein.faa.gz ${p%%/*}_protein.faa.gz  
 done
 ```
+Blast candidates against each species protein sequence
+-----------------------------
+workflow_prdm9_candidates.py
+combining_prdm9_blast_results.py
