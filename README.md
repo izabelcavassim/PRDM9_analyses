@@ -85,7 +85,7 @@ combining_prdm9_blast_results.py
 Building the phylogenetic tree
 -----------------------------
 To evaluate evidence for co-evolution between PRDM9 and the meiosis related genes, we need a high quality phylogenetic tree for diverse vertebrate groups. Evolutionary information on species divergence times and relationships were obtained using the TimeTree resource [http://timetree.org/; Kumar et al., 2017, accessed date]. XX out of the XX species were not present in this database. For these species, we used information from a close relative present in the database to determine their appropriate placement in the phylogenetic tree as follow:
-
+```
 Rhincodon typus (replaced with Ginglymostoma cirratum)
 Paramormyrops kingsleyae (replaced with Paramormyrops gabonensis)
 Oreochromis aureus (replaced with Oreochromis tanganicae)
@@ -115,3 +115,4 @@ Tinamus guttatus (no substitute found) ----> Tinamus major
 Strigops habroptila (no substitute found) -----> Probosciger aterrimus
 Corvus cornix (no substitute found) ------> Corvus woodfordi
 Bos indicus x Bos taurus (no substitute found)
+```
