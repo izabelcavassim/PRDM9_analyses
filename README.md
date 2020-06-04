@@ -80,3 +80,38 @@ Blast candidates against each species protein sequence
 -----------------------------
 workflow_prdm9_candidates.py
 combining_prdm9_blast_results.py
+
+
+Building the phylogenetic tree
+-----------------------------
+To evaluate evidence for co-evolution between PRDM9 and the meiosis related genes, we need a high quality phylogenetic tree for diverse vertebrate groups. Evolutionary information on species divergence times and relationships were obtained using the TimeTree resource [http://timetree.org/; Kumar et al., 2017, accessed date]. XX out of the XX species were not present in this database. For these species, we used information from a close relative present in the database to determine their appropriate placement in the phylogenetic tree as follow:
+
+Rhincodon typus (replaced with Ginglymostoma cirratum)
+Paramormyrops kingsleyae (replaced with Paramormyrops gabonensis)
+Oreochromis aureus (replaced with Oreochromis tanganicae)
+Cynoglossus semilaevis (replaced with Cynoglossus lingua)
+Paralichthys olivaceus (replaced with Paralichthys dentatus)
+Etheostoma spectabile (replaced with Etheostoma caeruleum)
+Notolabrus celidotus (replaced with Notolabrus gymnogenis)
+Periophthalmus magnuspinnatus (replaced with Periophthalmus argentilineatus)
+Thalassophryne amazonica (replaced with Opsanus tau)
+Tachysurus fulvidraco (replaced with Leiocassis longirostris)
+Astyanax mexicanus (replaced with Hollandichthys multifasciatus)
+Microcaecilia unicolor (replaced with Microcaecilia sp. PZ-2009)
+Python bivittatus (replaced with Python molurus)
+Apteryx mantelli (replaced with Apteryx australis)
+Chiroxiphia lanceolata (replaced with Chiroxiphia caudata)
+Gopherus evgoodei (replaced with Gopherus agassizii)
+Tupaia chinensis (replaced with Tupaia glis)
+Austrofundulus limnaeus (no substitute found) ------> Nothobranchius fuscotaeniatus
+Poecilia latipinna (no substitute found) --------> Poecilia vivipara
+Astatotilapia calliptera (no substitute found) -------> Copadichromis virginalis
+Neophocaena asiaeorientalis (no substitute found) ------> Phocoena dioptrica
+Oryzias melastigma (no substitute found) -----> Oryzias luzonensis
+Poecilia formosa (no substitute found) -------> Poecilia butleri
+Oreochromis niloticus (no substitute found) -------> Tilapia sparrmanii
+Kryptolebias marmoratus (no substitute found) -------> Fundulus heteroclitus
+Tinamus guttatus (no substitute found) ----> Tinamus major
+Strigops habroptila (no substitute found) -----> Probosciger aterrimus
+Corvus cornix (no substitute found) ------> Corvus woodfordi
+Bos indicus x Bos taurus (no substitute found)
