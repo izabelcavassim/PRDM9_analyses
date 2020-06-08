@@ -115,4 +115,8 @@ Tinamus guttatus (no substitute found) ----> Tinamus major
 Strigops habroptila (no substitute found) -----> Probosciger aterrimus
 Corvus cornix (no substitute found) ------> Corvus woodfordi
 Bos indicus x Bos taurus (no substitute found)
+Canis lupus familiaris -----> Canis lupus
+Neomonachus schauinslandi -----> Monachus schauinslandi
+Parambassis ranga --------> Pseudambassis_ranga
+Antrostomus carolinensis --------> Caprimulgus_carolinensis
 ```
