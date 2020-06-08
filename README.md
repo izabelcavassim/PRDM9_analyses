@@ -86,6 +86,13 @@ Blast candidates against each species protein sequence
 workflow_prdm9_candidates.py
 combining_prdm9_blast_results.py
 
+Splitting files to Batch search
+``` bash
+awk -v size=3900 -v pre=Batch_candidates -v pad=5 '
+   /^>/ { n++; if (n % size == 1) { close(fname); fname = sprintf("%s.%0" pad "d", pre, n) } }
+   { print >> fname }
+' all_genes_combined.fasta
+```
 
 Building the phylogenetic tree
 -----------------------------
