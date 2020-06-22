@@ -86,6 +86,12 @@ Blast candidates against each species protein sequence
 workflow_prdm9_candidates.py
 combining_prdm9_blast_results.py
 
+
+Identifying the domain structures of each protein sequence
+-----------------------------
+CDD_submission.py
+
+
 Splitting files to Batch search
 ``` bash
 awk -v size=3900 -v pre=Batch_candidates -v pad=5 '
