@@ -5,7 +5,7 @@ This repository was created to outline the analyses described in the paper Cavas
 Main analyzes are: 
 1. [RNAseq_analyses.md](./RNAseq_analyses.md) Contains scripts used to verify PRDM9 calls using RNA-seq data.
 2. [Orthologous_search.md](./Orthologous_search.md) Contains scripts used to identify orthologs of candidate co-evolving meiosis genes across vertebrates (339 species). 
-3. [PIC.Rmd] Contains R script used for the phylogenetic independent contrats (PIC) between PRDM9 and candidate genes.
+3. [PIC.Rmd](.PIC.Rmd) Contains R script used for the phylogenetic independent contrats (PIC) between PRDM9 and candidate genes.
 
 Some of the data will be provided here, if not in the following repository https://doi.org/10.6084/m9.figshare.11672685
 
