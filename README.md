@@ -10,4 +10,4 @@ Main analyzes are:
 Some of the data will be provided here, if not in the following repository https://doi.org/10.6084/m9.figshare.11672685
 
 Each of these steps will be explained in a different .md file which is placed in this repository.
-For more information or data accessement please don't hesitate to contact me! izabelcavassim at g mail . com
+For more information or data accessement please do not hesitate to contact me! izabelcavassim at g mail . com
