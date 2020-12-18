@@ -48,7 +48,7 @@ setwd("/Users/PM/Desktop/BayesTraitsV3.0.2-OSX")
 ```{r, echo = F}
 
 # Reading presence and absence file
-presence_absence = read.csv("~/Dropbox/PRDM9_evolution_paper/Simulations/data/blast_results_presence_absence_genes_all_174_combined_identified_domains_metadata.csv")
+presence_absence = read.csv("~/Dropbox/PRDM9_analyses/data/presence_absence.csv")
 rownames(presence_absence) = presence_absence$Species
 
 # Reading tree
@@ -99,7 +99,7 @@ Bayestraits_run = function(model="XY", tries,
           # here we are allowing the root to be or (1,1) : both genes presents or 1,0: at least prdm9 is present
           "Fossil Node AncNode 15", 
           "MLTol 0.0000000000000000000001",
-          "mltries 1",
+          "mltries 50",
           paste("ScaleTrees", scaling_factor))
   
   ################################
@@ -109,7 +109,7 @@ Bayestraits_run = function(model="XY", tries,
           paste("AddTag AncNode", species_root), 
           "Fossil Node AncNode 15",
           "MLTol 0.0000000000000000000001",
-          "mltries 1",
+          "mltries 50",
           paste("ScaleTrees", scaling_factor))
   
   ################################
