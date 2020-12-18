@@ -7,7 +7,10 @@ Main analyzes are:
 2. [Orthologous_search.md](./Orthologous_search.md) Contains scripts used to identify orthologs of candidate co-evolving meiosis genes across vertebrates (339 species). 
 3. [PIC.Rmd](./PIC.Rmd) Contains R script used for the phylogenetic independent contrats (PIC) between PRDM9 and candidate genes.
 
-Some of the data will be provided here, if not in the following repository https://doi.org/10.6084/m9.figshare.11672685
+The folder data includes some of the data used for the PIC analyses. Other files are found the following repository https://doi.org/10.6084/m9.figshare.11672685
+
+RNAseq data of 2 fish species and 2 reptiles (fastq files)
+Is Publicly available at the NCBI BioProject (accession no: PRJNA605699).
 
 Each of these steps will be explained in a different .md file which is placed in this repository.
 For more information or data accessement please do not hesitate to contact me! izabelcavassim at g mail . com
