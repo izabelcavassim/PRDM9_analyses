@@ -1,5 +1,5 @@
 ---
-title: "Running Bayestraits and simulations"
+title: "Running Bayestraits using a wrapper"
 author: "Maria Izabel Cavassim"
 date: "8/2/2020"
 output: html_document
@@ -14,288 +14,168 @@ These are the dependencies required to run these analyses
 
 ```{r}
 # R packages
+#install.packages(c("phytools", "geiger", "ape", "dplyr", "ggplot2", "ggrepel", "gridExtra"))
 library(phytools)
 library(geiger)
 library(ape)
 library(dplyr)
 library(ggplot2)
-
-# Installation of Bayestraits software
-# go to:
-# http://www.evolution.rdg.ac.uk/BayesTraitsV3.0.2/BayesTraitsV3.0.2.html
-
-# Data directory:
-###### ----- ####
-# ~/Dropbox/PRDM9_evolution_paper/Simulations/data/
-
-# Scripts directory:
-##### ----- #####
-# ~/Dropbox/PRDM9_evolution_paper/Simulations/scripts/
-
-# Zach's script for pruning the tree (so we have both PRDM9 and the gene in the root of the tree)
-source("~/Dropbox/PRDM9_evolution_paper/Simulations/scripts/pruning.R")
-
-# Molly's script for simulation of traits (presence and absence)
-source("~/Dropbox/PRDM9_evolution_paper/Simulations/scripts/sim_history_v8.R")
+library(ggrepel)
+#library("devtools")
+#install_github("jdstorey/qvalue")
+library(qvalue)
+library(gridExtra)
 ```
 
-## Installing Bayestraits wrapper and running the original analysis in R
-I was first running the analysis using the command line approach, but I figured that it would be
-easier to have everything in one environment (R), so the pruning of the trees, simulations and runs were all within R (now I am doing only one trie at time, in the cluster I do 10 tries and take the mean value of those tries).
 
-```{r, eval = F}
+## Installing Bayestraits wrapper in R
+The software Bayestraits can be run with a wrapper developed by Randi Griffin in R. Check
+her website for a tutorial ![here](http://www.randigriffin.com/projects/btw.html). Only mac and windows are supported.
+```{r, echo=F}
 # Installing the R package to take the Bayestrait software as 
 # an wrapper and run the analysis within R:
-#library("devtools")
-#install_github("rgriff23/btw")
+library("devtools")
+install_github("rgriff23/btw")
 library("btw")
 
-# set your directory to the directory of the Bayestraits software
+# Set your directory to the directory of the Bayestraits software
 # You need to download it from here:
 # http://www.evolution.rdg.ac.uk/BayesTraitsV3.0.2/BayesTraitsV3.0.2.html
 setwd("/Users/PM/Desktop/BayesTraitsV3.0.2-OSX")
-# I have included the executable of the software in this directory:
-setwd("~/Dropbox/PRDM9_evolution_paper/Simulations")
-
 ```
 
-# Looking at the genome assembly stats
-```{r}
 
-coverage_metadata =  read.csv("/Users/PM/Desktop/339_species/stats/stats_assemblies.csv")
+```{r, echo = F}
 
-# modified calls Zach
-speciestree_prdm9<-read.newick(file="~/Dropbox/PRDM9_evolution_paper/Simulations/data/modified_tree.txt")
+# Reading presence and absence file
+presence_absence = read.csv("~/Dropbox/PRDM9_evolution_paper/Simulations/data/blast_results_presence_absence_genes_all_174_combined_identified_domains_metadata.csv")
+rownames(presence_absence) = presence_absence$Species
 
-PRDM9_calls = read.csv("~/Dropbox/PRDM9_evolution_paper/Simulations/data/modified_calls.txt", header = F)
-PRDM9_calls = cbind(speciestree_prdm9$tip.label, PRDM9_calls)
-PRDM9_calls[which(PRDM9_calls$V1 == "TRUE"), 2] <- "1"
-PRDM9_calls[which(PRDM9_calls$V1 == "FALSE"), 2] <- "0"
-PRDM9_calls$Order = seq(1, nrow(PRDM9_calls))
+# Reading tree
+prdm9tree = read.newick("~/Dropbox/PRDM9_analyses/data/species_tree_subset.nw")
 
-test = merge(PRDM9_calls, coverage_metadata, by.x="speciestree_prdm9$tip.label", by.y="Species")
+# PRDM9 calls (full PRDM9 == 1, incomplete PRDM9 == 0)
+prdm9_calls = presence_absence$PRDM9_final
+names(prdm9_calls) = presence_absence$Species
 
-busco_scores = read.csv("~/Dropbox/PRDM9_evolution_paper/Simulations/data/results_255_genes_292_busco.txt")
-busco_scores = subset(busco_scores, busco_scores$category == "M")
-busco_scores$my_species = gsub("_protein", "", busco_scores$my_species)
-test = merge(test, busco_scores, by.x="speciestree_prdm9$tip.label", by.y="my_species")
+# Emptying nodes names of the tree
+prdm9tree$node.label=NULL
 
-#write.csv(test, "/Users/PM/Desktop/339_species/stats/contigs_stats.txt")
-setdiff(PRDM9_calls$`speciestree_prdm9$tip.label`, test$`speciestree_prdm9$tip.label`)
+# mean branch length equal to 0.1
+mean_bl = 0.1/mean(prdm9tree$edge.length)
+median_bl = 0.1/median(prdm9tree$edge.length)
 
-contigs_stat = read.csv( "/Users/PM/Desktop/339_species/stats/contigs_stats.txt", sep="\t")
-contigs_stat %>%
-  group_by(Order_tree, my_values) %>%
-  arrange(my_values,desc(contig_N50)) -> bla
-
-species_zeros = as.character(bla[which(bla$Order_tree == "1"), 2]$speciestree_prdm9.tip.label[1])
-species_zeros = c(species_zeros, as.character(bla[which(bla$Order_tree == "2"), 2]$speciestree_prdm9.tip.label[1:3]))
-#species_zeros = c(species_zeros, "Betta_splendens") 
-#species_zeros = c(species_zeros, "Anabas_testudineus")
-species_zeros = c(species_zeros,  as.character(bla[which(bla$Order_tree == "3"), 2]$speciestree_prdm9.tip.label[1:3]))
-species_zeros = c(species_zeros,  as.character(bla[which(bla$Order_tree == "4"), 2]$speciestree_prdm9.tip.label[1:3]))
-species_zeros = c(species_zeros,  as.character(bla[which(bla$Order_tree == "5"), 2]$speciestree_prdm9.tip.label[1:3]))
-species_zeros = c(species_zeros,  as.character(bla[which(bla$Order_tree == "6"), 2]$speciestree_prdm9.tip.label[1:3]))
-species_zeros = c(species_zeros,  as.character(bla[which(bla$Order_tree == "7"), 2]$speciestree_prdm9.tip.label[1:3]))
-species_zeros = c(species_zeros,  as.character(bla[which(bla$Order_tree == "8"), 2]$speciestree_prdm9.tip.label[1:3]))
-species_zeros<-species_zeros[!is.na(species_zeros)]
-#species_zeros[7] <- "Nanorana_parkeri"
-species_zeros_to_keep <- species_zeros
-
-```
-
-# Running the orginal data
-
-Here I am only running the real data, in the next R chunk I will add the simulation part
-```{r, eval = F}
-##########################################
-# Running our data with Bayestraits wrapper
-##########################################
-
-#read species tree:
-# speciestree_prdm9<-read.newick(file="~/Dropbox/PRDM9_evolution_paper/Simulations/data/species_tree_339_changed_replacements_to_old_names.nwk")
-speciestree_prdm9<-read.newick(file="~/Dropbox/PRDM9_evolution_paper/Simulations/data/modified_tree.txt")
-
-# modified calls Zach
-PRDM9_calls = read.csv("~/Dropbox/PRDM9_evolution_paper/Simulations/data/modified_calls.txt", header = F)
-PRDM9_calls = cbind(speciestree_prdm9$tip.label, PRDM9_calls)
-PRDM9_calls[which(PRDM9_calls$V1 == "TRUE"), 2] <- "1"
-PRDM9_calls[which(PRDM9_calls$V1 == "FALSE"), 2] <- "0"
-
-prdm9 = as.character(PRDM9_calls$V1)
-names(prdm9) = PRDM9_calls$`speciestree_prdm9$tip.label`
+# Creating a function to run Bayestraits for all our genes
+Bayestraits_run = function(model="XY", tries, 
+                            pres_abs=presence_absence, # presence absence matrix
+                            tree=prdm9tree, # prdm9 species tree
+                            scaling_factor=mean_bl, # branch length scaling factor
+                            max_rate=100, 
+                            prdm9_status=prdm9_calls, zero_incomplete=FALSE){
   
-# mean branch length equal to 0.1
-mean_bl = 0.1/mean(speciestree_prdm9$edge.length)
-median_bl = 0.1/median(speciestree_prdm9$edge.length)
-
-########################################
-###load true presence and absence matrix:
-########################################
-# Here we have fewer genes than 221, I need to check
-presence_absence_df_filtered = read.csv("~/Dropbox/PRDM9_evolution_paper/Simulations/data/blast_results_presence_absence_genes_all_339_combined_identified_domains_metadata.csv", sep=",", row.names = 1, stringsAsFactors = FALSE)
-
-# Excluding plytomies
-presence_absence_df_filtered = subset(presence_absence_df_filtered, presence_absence_df_filtered$Species %in% speciestree_prdm9$tip.label)
-
-# Species to exclude based on BUSCO scores
-species_to_exclude = read.csv(file="~/Dropbox/PRDM9_evolution_paper/Simulations/data/species_to_exclude_busco.txt")
-species_to_exclude$x = gsub("_protein", "", species_to_exclude$x)
-
-`%notin%` <- Negate(`%in%`)
-presence_absence_df_filtered = subset(presence_absence_df_filtered, presence_absence_df_filtered$Species %notin% species_to_exclude$x)
-
-# exclude birds (except for zebra finch and chicken, called "birds" in the dataframe)
-#presence_absence_df_filtered = subset(presence_absence_df_filtered, presence_absence_df_filtered$Major.clade %notin% "Aves")
-
-# Exclude most of the "zero" species
-species_ones_to_keep = presence_absence_df_filtered[presence_absence_df_filtered$Possible_assignements == "1",2]
-species_to_keep = c(species_zeros_to_keep, species_ones_to_keep)
-
-presence_absence_df_filtered = subset(presence_absence_df_filtered, presence_absence_df_filtered$Species %in% species_to_keep )
-
-presence_absence_df_filtered = presence_absence_df_filtered[-which(presence_absence_df_filtered$Species== "Callorhinchus_milii"),]
-
-# Exclude it from the species tree also
-speciestree_prdm9 = keep.tip(speciestree_prdm9, presence_absence_df_filtered$Species)
-
-# Checking if the tip labels differ 
-setdiff(speciestree_prdm9$tip.label, row.names(presence_absence_df_filtered))
-setdiff(row.names(presence_absence_df_filtered),speciestree_prdm9$tip.label)
-
-test = merge(presence_absence_df_filtered, PRDM9_calls, by.x="Species", by.y="speciestree_prdm9$tip.label")
-write.csv(test, "~/Dropbox/PRDM9_evolution_paper/Simulations/data/blast_results_presence_absence_genes_all_174_combined_identified_domains_metadata.csv")
-
-# Emptying nodes names
-speciestree_prdm9$node.label<-NULL
-
-# mean branch length equal to 0.1
-mean_bl = 0.1/mean(speciestree_prdm9$edge.length)
-median_bl = 0.1/median(speciestree_prdm9$edge.length)
-
-#prdm9 = presence_absence_df_filtered$Possible_assignements
-#names(prdm9) <- presence_absence_df_filtered$Species
-write.tree(speciestree_prdm9,  "~/Dropbox/PRDM9_evolution_paper/species_tree_174_3species_per_zero_calls.nw")
-Bayestraits_run <- function(model="XY", tries, pres_abs=presence_absence_df_filtered, tree=speciestree_prdm9, scaling_factor=mean_bl, max_rate=100, gain_rate, prdm9_status=prdm9, pruning=F, zero_incomplete=FALSE, species_root="Petromyzon_marinus Callorhinchus_milii"){
+  # Creating new variables
   results_final = NULL
   not_binary = NULL
   indexing = NULL
-  genes = colnames(pres_abs)[6:length(pres_abs)]
   
-  species_root = toString(speciestree_prdm9$tip.label, collapse = " ")
+  # Candidate genes to be tested for coevolution
+  genes = colnames(pres_abs)[7:length(pres_abs)]
+  
+  # Species closest to the root
+  species_root = toString(tree$tip.label, collapse = " ")
+  
   ##########################################
   # Models transitions (Q's)
   ##########################################
-  # Species closest to the root
-  species = species_root 
-  #species = "Petromyzon_marinus"
   # Parameters description is found in the Bayestraits (V3) manual: 
   # http://www.evolution.rdg.ac.uk/BayesTraitsV3.0.1/Files/BayesTraitsV3.Manual.pdf
+  
+  ################################
+  # Null model: PRDM9 and candidate gene evolve independently
+  ################################
   H0_with_restrictions = c("2","1",
-  #"seed 4104611364",
   # adding a tag to the species closest 
-  paste("AddTag AncNode", species), 
-  # here we are allowing the root to be or (1,1) : both genes presents or 1,0: at least prdm9 is present
-  "Fossil Node AncNode 15", 
-  "MLTol 0.0000000000000000000001",
-  "mltries 100",
-  paste("ScaleTrees", scaling_factor))
+          paste("AddTag AncNode", species_root), 
+          # here we are allowing the root to be or (1,1) : both genes presents or 1,0: at least prdm9 is present
+          "Fossil Node AncNode 15", 
+          "MLTol 0.0000000000000000000001",
+          "mltries 1",
+          paste("ScaleTrees", scaling_factor))
   
   ################################
   # Alternative Full Dependent model (XY), restrictions are also applied
   ################################
   ha1 = c("3", "1", 
-  #"seed 4104611364",
-  paste("AddTag AncNode", species), 
-  "Fossil Node AncNode 15",
-  "MLTol 0.0000000000000000000001",
-  "mltries 10",
-  paste("ScaleTrees", scaling_factor))
+          paste("AddTag AncNode", species_root), 
+          "Fossil Node AncNode 15",
+          "MLTol 0.0000000000000000000001",
+          "mltries 1",
+          paste("ScaleTrees", scaling_factor))
   
   ################################
   # Alternative_model_prdm9 (X), restrictions are also applied
   ################################
   ha2 = c("3", "1",
-  #"seed 4104611364",
-  paste("AddTag AncNode", species), 
-  "Fossil Node AncNode 15",
-  "MLTol 0.0000000000000000000001",
-  "Restrict q31=q42",
-  "mltries 100",
-  paste("ScaleTrees", scaling_factor))
+          paste("AddTag AncNode", species_root), 
+          "Fossil Node AncNode 15",
+          "MLTol 0.0000000000000000000001",
+          "Restrict q31=q42",
+          "mltries 100",
+          paste("ScaleTrees", scaling_factor))
   
   ################################
   # Alternative_model_gene (Y),restrictions are also applied
   ################################
   ha3 = c("3", "1",
-  #"seed 4104611364",
-  paste("AddTag AncNode", species), 
-  "Fossil Node AncNode 15",
-  "MLTol 0.0000000000000000000001",
-  "Restrict q21=q43",
-  "mltries 20", 
-  paste("ScaleTrees", scaling_factor))
+          #"seed 4104611364",
+          paste("AddTag AncNode", species_root), 
+          "Fossil Node AncNode 15",
+          "MLTol 0.0000000000000000000001",
+          "Restrict q21=q43",
+          "mltries 20", 
+          paste("ScaleTrees", scaling_factor))
   
   #genes = c("ZCWPW1", "ZCWPW2")
   for(i in genes){
-    #i="ZCWPW1"
     gene2 = pres_abs[,i]
     print(i)
     names(gene2) = row.names(pres_abs)
     indexing = indexing + 1
-            
+    
     # Ordering the presence and absence based on prdm9 order!
     gene_df = as.data.frame(cbind(prdm9_status, gene2 = gene2[names(prdm9_status)]), stringsAsFactors = FALSE)
     gene_df$species = rownames(gene_df) 
     
-    #gene_df["Callorhinchus_milii", 1] <- 0  
-    
-    # Making doubtable calls NA's
-    if(zero_incomplete == TRUE){
-    #gene_df["Callorhinchus_milii", 1] <- 0  
-    #gene_df["Arvicanthis_niloticus", 1] <- 1 # mammal
-    #gene_df["Orycteropus_afer", 1] <- 1 # mammal
-    gene_df["Rhincodon_typus", 1] <- 0
-    gene_df["Amblyraja_radiata", 1] <- 0
-    gene_df["Acipenser_ruthenus", 1] <- 0
-    gene_df["Chanos_chanos", 1] <- 0
-    gene_df["Gadus_morhua", 1] <- 0
-    gene_df["Salmo_trutta", 1] <- 0
-    gene_df["Pangasianodon_hypophthalmus", 1] <- 0
-    gene_df["Paramormyrops_kingsleyae", 1] <- 0
-    gene_df["Monodelphis_domestica", 1] <- 0
-    print(gene_df)
-    }
     if(zero_incomplete == FALSE){
-    #gene_df["Callorhinchus_milii", 1] <- "-"  
-    #gene_df["Arvicanthis_niloticus", 1] <- "-"
-    #gene_df["Orycteropus_afer", 1] <- "-"
-    gene_df["Rhincodon_typus", 1] <- "-"
-    gene_df["Amblyraja_radiata", 1] <- "-"
-    gene_df["Acipenser_ruthenus", 1] <- "-"
-    gene_df["Chanos_chanos", 1] <- "-"
-    gene_df["Gadus_morhua", 1] <- "-"
-    gene_df["Salmo_trutta", 1] <- "-"
-    gene_df["Pangasianodon_hypophthalmus", 1] <- "-"
-    gene_df["Paramormyrops_kingsleyae", 1] <- "-"
-    gene_df["Monodelphis_domestica", 1] <- "-"
+      #gene_df["Callorhinchus_milii", 1] = "-"  
+      #gene_df["Arvicanthis_niloticus", 1] = "-"
+      #gene_df["Orycteropus_afer", 1] = "-"
+      gene_df["Rhincodon_typus", 1] = "-"
+      gene_df["Amblyraja_radiata", 1] = "-"
+      gene_df["Acipenser_ruthenus", 1] = "-"
+      gene_df["Chanos_chanos", 1] = "-"
+      gene_df["Gadus_morhua", 1] = "-"
+      gene_df["Salmo_trutta", 1] = "-"
+      gene_df["Pangasianodon_hypophthalmus", 1] = "-"
+      gene_df["Paramormyrops_kingsleyae", 1] = "-"
+      gene_df["Monodelphis_domestica", 1] = 0
     }
     
     ### Pruning the gene so we have both 
     ### PRDM9 and the gene present in the root of the tree
-            
+    
     # Ordering the presence and absence based on the tree species order!
     gene_df = gene_df[tree$tip.label,]
-    print(gene_df)
+    
     # No pruning of the tree!!!!
     gene_df$species = tree$tip.label
     new_tree = tree
-   
+    
     # Checks of the pruning
     # Check 1: check if we excluded any species
     print("The number of tips:")
     print(length(new_tree$tip.label))
-            
+    
     # Check 2: 
     # Checking if the gene is variable
     binary = TRUE
@@ -304,109 +184,102 @@ Bayestraits_run <- function(model="XY", tries, pres_abs=presence_absence_df_filt
       binary = FALSE
       not_binary[indexing] = gene2
     }
-         
+    
     # Check 3:
     # Check the species excluded, if excluded   
     if(binary == TRUE){
       print(setdiff(tree$tip.label, new_tree$tip.label))
-              
-      colnames(gene_df) <- c("prdm9", "gene2", "species")
-        
-      # reordering the dataframe
+      
+      colnames(gene_df) = c("prdm9", "gene2", "species")
+      
+      # Reordering the dataframe
       gene_df = gene_df[ ,c(3, 1, 2)]
-        
+      
       # emptying the node label names (otherwise the software complains)      
-      new_tree$node.label<-NULL
-              
+      new_tree$node.label=NULL
+      
       # Testing the null
       # To silent the output do silent = T
-      H0 <- bayestraits(gene_df, new_tree, H0_with_restrictions, remove_files = T, silent=F)
-      H0.results <- H0$Log$results
-              
-      #prdm9_new = as.character(gene_df$prdm9)
-      #names(prdm9_new) = gene_df$species
-      #gene_new = as.character(gene_df$gene2)
-      #names(gene_new) = gene_df$species
-              
+      H0 = bayestraits(gene_df, new_tree, H0_with_restrictions, remove_files = T, silent=F)
+      H0.results = H0$Log$results
+      
       # Testing the alternative models
       if(model=="XY"){  
-          # # Testing the alternative (XY)
-          Ha <- bayestraits(gene_df, new_tree, ha1, remove_files = T, silent=F)
-          Ha.results <- Ha$Log$results
-          print("Alternative model results")
-          print(Ha.results)
-                
-          # Likelihood ratio test null versus XY
-          LRT.XY = 2*(Ha.results$Lh -(H0.results$Lh))
-          ### Here I changed the degrees of freedom, since we are not restricting parameters any longer!!
-          p.XY = 1 - pchisq(LRT.XY, df = 4) 
-          print("p-value using Baystraits's method is:")
-          print(p.XY)
-          
-          # Saving chi-square tests 
-          attachs = H0.results[,c(2,3,4,5,6)] 
-          print("these are the attachs")
-          print(attachs)
-          colnames(attachs) = c("Lik_H0", "alpha1" , "beta1", "alpha2", "beta2")
-          results = cbind(Ha.results, attachs)
-          results$Gene = i
-          results$P.value = p.XY
-          results$Trie = tries
-          results_final = rbind(results_final, results) 
-          }
-      if(model=="X"){
-          # # Testing the alternative (X)
-          Ha.X <- bayestraits(gene_df, new_tree, ha2, remove_files = T, silent=F)
-          Ha.X.results <- Ha.X$Log$results
-                
-          # Likelihood ratio test null versus X
-          LRT.X = 2*(Ha.X.results$Lh -(H0.results$Lh))
-          p.X = 1 - pchisq(LRT.X, df = 2)
-          print(p.X)
-                
-          # Saving chi-square tests
-          print(H0.results)
-          attachs = H0.results[,c(2,3,4,5,6)] 
-          print("these are the attachs")
-          print(attachs)
-          colnames(attachs) = c("Lik_H0", "alpha1" , "beta1", "alpha2", "beta2")
-          results = cbind(Ha.X.results, attachs)
-          results$Gene = i
-          results$P.value = p.X
-          results$Trie = tries
-          results_final = rbind(results_final, results)
-          }
-      if(model=="Y"){
-          # # Testing the alternative (X)
-          Ha.Y <- bayestraits(gene_df, new_tree, ha3, remove_files = T, silent=F)
-          Ha.Y.results <- Ha.Y$Log$results
-                
-          # Likelihood ratio test null versus Y
-          LRT.Y = 2*(Ha.Y.results$Lh -(H0.results$Lh))
-          p.Y = 1 - pchisq(LRT.Y, df = 2)
-          print(p.Y)
-          # Saving chi-square tests
-          attachs = H0.results[,c(2,3,4,5,6)] 
-          colnames(attachs) = c("Lik_H0", "alpha1" , "beta1", "alpha2", "beta2")
-          results = cbind(Ha.Y.results, attachs)
-          results$Gene = i
-          results$P.value = p.Y
-          results$Trie = tries
-          results_final = rbind(results_final, results)
-          }
-        }
+        # # Testing the alternative (XY)
+        Ha = bayestraits(gene_df, new_tree, ha1, remove_files = T, silent=F)
+        Ha.results = Ha$Log$results
+        print("Alternative model results")
+        print(Ha.results)
+        
+        # Likelihood ratio test null versus XY
+        LRT.XY = 2*(Ha.results$Lh -(H0.results$Lh))
+        p.XY = 1 - pchisq(LRT.XY, df = 4) 
+        print("p-value using Baystraits's method is:")
+        print(p.XY)
+        
+        # Saving chi-square tests 
+        attachs = H0.results[,c(2,3,4,5,6)] 
+        print("these are the attachs")
+        print(attachs)
+        colnames(attachs) = c("Lik_H0", "alpha1" , "beta1", "alpha2", "beta2")
+        results = cbind(Ha.results, attachs)
+        results$Gene = i
+        results$P.value = p.XY
+        results$Trie = tries
+        results_final = rbind(results_final, results) 
       }
-    results_final
+      if(model=="X"){
+        # # Testing the alternative (X)
+        Ha.X = bayestraits(gene_df, new_tree, ha2, remove_files = T, silent=F)
+        Ha.X.results = Ha.X$Log$results
+        
+        # Likelihood ratio test null versus X
+        LRT.X = 2*(Ha.X.results$Lh -(H0.results$Lh))
+        p.X = 1 - pchisq(LRT.X, df = 2)
+        print(p.X)
+        
+        # Saving chi-square tests
+        print(H0.results)
+        attachs = H0.results[,c(2,3,4,5,6)] 
+        print("these are the attachs")
+        print(attachs)
+        colnames(attachs) = c("Lik_H0", "alpha1" , "beta1", "alpha2", "beta2")
+        results = cbind(Ha.X.results, attachs)
+        results$Gene = i
+        results$P.value = p.X
+        results$Trie = tries
+        results_final = rbind(results_final, results)
+      }
+      if(model=="Y"){
+        # # Testing the alternative (X)
+        Ha.Y = bayestraits(gene_df, new_tree, ha3, remove_files = T, silent=F)
+        Ha.Y.results = Ha.Y$Log$results
+        
+        # Likelihood ratio test null versus Y
+        LRT.Y = 2*(Ha.Y.results$Lh -(H0.results$Lh))
+        p.Y = 1 - pchisq(LRT.Y, df = 2)
+        print(p.Y)
+        # Saving chi-square tests
+        attachs = H0.results[,c(2,3,4,5,6)] 
+        colnames(attachs) = c("Lik_H0", "alpha1" , "beta1", "alpha2", "beta2")
+        results = cbind(Ha.Y.results, attachs)
+        results$Gene = i
+        results$P.value = p.Y
+        results$Trie = tries
+        results_final = rbind(results_final, results)
+      }
+    }
+  }
+  results_final
 }
 
 ##########################################################
-# All models, treating inclomplete species as missing data 
+# All models, treating species for which we do detect a SSXRD only with lenient threshold as missing data 
 ##########################################################
-# Do 10 tries and take the mean
-# Note that I am NOT pruning the tree any longer!!
-original_results_XY_missing_2 = NULL
-original_results_X_missing_2 = NULL
-original_results_Y_missing_2 = NULL
+
+original_results_XY_missing = NULL
+original_results_X_missing = NULL
+original_results_Y_missing = NULL
 
 for(i in 1:1){ # 1:10 if mltries == 1
   # testing all models
@@ -415,50 +288,49 @@ for(i in 1:1){ # 1:10 if mltries == 1
   #trie_Y = Bayestraits_run(model="Y", tries=i, zero_incomplete = FALSE)
   
   # saving all results
-  original_results_XY_missing_2 = rbind(original_results_XY_missing_2,trie_XY)
+  original_results_XY_missing = rbind(original_results_XY_missing,trie_XY)
   #original_results_X_missing_2 = rbind(original_results_X_missing_2,trie_X)
   #original_results_Y_missing_2 = rbind(original_results_Y_missing_2,trie_Y)
 }
 
-original_results_XY_sig_missing = subset(original_results_XY_missing_2, original_results_XY_missing_2$P.value <= 0.05)
+original_results_XY_sig_missing = subset(original_results_XY_missing, original_results_XY_missing$P.value <= 0.05)
+
 ###
 # Test for Uniformity of p-values
 ks.test(original_results_XY_missing$P.value, "punif")
 
-##### 
-# Estimating FDR
+##########################################################
+# Estimating FDR with the package qvalue
+##########################################################
 # Estimating Q:
 p = original_results_XY_missing$P.value
+qobj = qvalue(p = p)
+qvalues = qobj$qvalues
+pi0 = qobj$pi0
+lfdr = qobj$lfdr
 
-#library("devtools")
-#install_github("jdstorey/qvalue")
-library(qvalue)
-qobj <- qvalue(p = p)
-
-qvalues <- qobj$qvalues
-pi0 <- qobj$pi0
-lfdr <- qobj$lfdr
-
+# Cumulative number of signidicant calss
 summary(qobj)
 hist(qobj)
 plot(qobj)
 
-####
+##########################################################
 # Q-Q plots
+##########################################################
 # the points
-expected <- -log10( (n:1)/(n+1) )
-observed <- sort(-log10(p))
+expected = -log10( (n:1)/(n+1) )
+observed = sort(-log10(p))
 
 df = original_results_XY_missing
-df = df[df$Gene != "PRDM9",]
 df = df[order(df$P.value, decreasing = T),]
+
 # df by log p-value
-n=nrow(df)
-df$expected = -log10((n:1)/(n+1))
+ns=nrow(df)
+df$expected = -log10((ns:1)/(ns+1))
 df$observed = -log10(df$P.value)
 df$significant = ifelse(df$P.value < 0.05, "p-value < 0.05", "Not Sig")
-library("ggrepel")
-p1 <- ggplot(df, aes(x=expected, y=observed)) + theme_bw() + geom_abline(intercept = 0, slope = 1) + 
+
+p1 = ggplot(df, aes(x=expected, y=observed)) + theme_bw() + geom_abline(intercept = 0, slope = 1) + 
   xlab(expression(paste("Expected ", -log[10](p)))) +  
   ylab(expression(paste("Observed ", -log[10](p)))) +
   geom_point(aes(color = significant)) +
@@ -472,50 +344,11 @@ p1 <- ggplot(df, aes(x=expected, y=observed)) + theme_bw() + geom_abline(interce
     point.padding = unit(0.2, "lines")
   ) + ggtitle("Q-Q plot")
 
-
+##########################################################
 # Histogram analyses
-p2 <-ggplot(df, aes(x=P.value)) + geom_histogram(color="black", fill="white", bins = 20) + theme_bw() + ggtitle("P-value distribution XY")
-#library(gridExtra)
+##########################################################
+p2 =ggplot(df, aes(x=P.value)) + geom_histogram(color="black", fill="white", bins = 20) + theme_bw() + ggtitle("P-value distribution XY")
+
+# Combining plots
 grid.arrange(p1,p2)
-
-
-original_results_X_sig_missing = subset(original_results_X_missing, original_results_X_missing$P.value <= 0.05)
-original_results_Y_sig_missing = subset(original_results_Y_missing, original_results_Y_missing$P.value <= 0.05)
-
-# Saving significant files
-write.table(original_results_XY_sig_missing, "~/Dropbox/PRDM9_evolution_paper/Simulations/results/original_results_XY_sig_missing_uncertain_species.csv")
-write.table(original_results_X_sig_missing, "~/Dropbox/PRDM9_evolution_paper/Simulations/results/original_results_X_sig_missing_uncertain_species.csv")
-write.table(original_results_Y_sig_missing, "~/Dropbox/PRDM9_evolution_paper/Simulations/results/original_results_Y_sig_missing_uncertain_species.csv")
-
-library(gridExtra)
-plotting_pvalues <- function(XY, X, Y){
-XY_plot <-ggplot(XY, aes(x=P.value)) + geom_histogram(color="black", fill="white", bins = 20) + theme_bw() + ggtitle("P-value distribution XY")
-X_plot <-ggplot(X, aes(x=P.value)) + geom_histogram(color="black", fill="white", bins = 20) + theme_bw() + ggtitle("P-value distribution gene dependent on PRDM9")
-Y_plot <-ggplot(Y, aes(x=P.value)) + geom_histogram(color="black", fill="white", bins = 20) + theme_bw() + ggtitle("P-value distribution PRDM9 dependent on gene")
-grid.arrange(XY_plot, X_plot, Y_plot) 
-}
-plotting_pvalues(original_results_XY_missing, original_results_X_missing, original_results_Y_missing)
-
-# Saving up the genes into a dataframe
-metadata = read.csv("~/Dropbox/PRDM9_evolution_paper/Simulations/data/blast_results_presence_absence_genes_all_339_combined_identified_domains_metadata.csv", sep=",", row.names = 1, stringsAsFactors = FALSE)
-
-metadata$Species.1  = metadata$Species
-significant = metadata[,original_results_XY_sig_missing$Gene]
-significant = cbind(metadata[,c(1,2,3, 148)], significant)
-significant = significant[speciestree_prdm9$tip.label,]
-
-write.csv(significant, "~/Dropbox/PRDM9_evolution_paper/original_results_XY_sig_missing.csv")
-
-metadata$Species.1  = metadata$Species
-significant_X = metadata[,original_results_X_sig_missing$Gene]
-significant_X = cbind(metadata[,c(1,2,3, 148)], significant_X)
-significant_X = significant_X[speciestree_prdm9$tip.label,]
-
-write.csv(significant_X, "~/Dropbox/PRDM9_evolution_paper/original_results_X_sig_missing.csv")
-
-significant_Y = metadata[,original_results_Y_sig_missing$Gene]
-significant_Y = cbind(metadata[,c(1,2,3, 148)], significant_Y)
-significant_Y = significant_Y[speciestree_prdm9$tip.label,]
-
-write.csv(significant_Y, "~/Dropbox/PRDM9_evolution_paper/original_results_Y_sig_missing.csv")
 ```
