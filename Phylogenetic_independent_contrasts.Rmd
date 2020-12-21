@@ -263,7 +263,7 @@ Bayestraits_run <- function(model="XY", tries, pres_abs=presence_absence_df_filt
     gene_df["Salmo_trutta", 1] <- 0
     gene_df["Pangasianodon_hypophthalmus", 1] <- 0
     gene_df["Paramormyrops_kingsleyae", 1] <- 0
-    gene_df["Monodelphis_domestica", 1] <- 0
+    gene_df["Monodelphis_domestica", 1] <- 1
     print(gene_df)
     }
     if(zero_incomplete == FALSE){
