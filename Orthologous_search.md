@@ -79,8 +79,8 @@ done
 ```
 Blast candidates against each species protein sequence
 -----------------------------
-* workflow_prdm9_candidates.py !!!!!!!!!!!! include the clean one
-* combining_prdm9_blast_results.py
+* [blasting_prdm9_candidates.py] !!!!!!!!!!!! include the clean one
+* [combining_prdm9_blast_results.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/combining_prdm9_blast_results.py)
 
 
 Identifying the domain structures within each protein sequence
