@@ -34,8 +34,8 @@ her website for a tutorial ![here](http://www.randigriffin.com/projects/btw.html
 ```{r, echo=F}
 # Installing the R package to take the Bayestrait software as 
 # an wrapper and run the analysis within R:
-library("devtools")
-install_github("rgriff23/btw")
+#library("devtools")
+#install_github("rgriff23/btw")
 library("btw")
 
 # Set your directory to the directory of the Bayestraits software
@@ -99,7 +99,7 @@ Bayestraits_run = function(model="XY", tries,
           # here we are allowing the root to be or (1,1) : both genes presents or 1,0: at least prdm9 is present
           "Fossil Node AncNode 15", 
           "MLTol 0.0000000000000000000001",
-          "mltries 50",
+          "mltries 10",
           paste("ScaleTrees", scaling_factor))
   
   ################################
@@ -109,7 +109,7 @@ Bayestraits_run = function(model="XY", tries,
           paste("AddTag AncNode", species_root), 
           "Fossil Node AncNode 15",
           "MLTol 0.0000000000000000000001",
-          "mltries 50",
+          "mltries 10",
           paste("ScaleTrees", scaling_factor))
   
   ################################
@@ -135,7 +135,7 @@ Bayestraits_run = function(model="XY", tries,
           "mltries 20", 
           paste("ScaleTrees", scaling_factor))
   
-  #genes = c("ZCWPW1", "ZCWPW2")
+  genes = c("ZCWPW1", "ZCWPW2", "TEX15", "MEI1", "FMR1NB", "RPA", "FBXO47", "BOD1L1")
   for(i in genes){
     gene2 = pres_abs[,i]
     print(i)
@@ -155,7 +155,7 @@ Bayestraits_run = function(model="XY", tries,
       gene_df["Acipenser_ruthenus", 1] = "-"
       gene_df["Chanos_chanos", 1] = "-"
       gene_df["Gadus_morhua", 1] = "-"
-      gene_df["Salmo_trutta", 1] = "-"
+      gene_df["Salmo_trutta", 1] = 1
       gene_df["Pangasianodon_hypophthalmus", 1] = "-"
       gene_df["Paramormyrops_kingsleyae", 1] = "-"
       gene_df["Monodelphis_domestica", 1] = 0

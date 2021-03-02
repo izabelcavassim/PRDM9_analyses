@@ -113,7 +113,8 @@ Here I am only running the real data, in the next R chunk I will add the simulat
 ##########################################
 
 #read species tree:
-# speciestree_prdm9<-read.newick(file="~/Dropbox/PRDM9_evolution_paper/Simulations/data/species_tree_339_changed_replacements_to_old_names.nwk")
+speciestree_prdm9_old<-read.newick(file="~/Dropbox/PRDM9_evolution_paper/Simulations/data/species_tree_339_changed_replacements_to_old_names.nwk")
+
 speciestree_prdm9<-read.newick(file="~/Dropbox/PRDM9_evolution_paper/Simulations/data/modified_tree.txt")
 
 # modified calls Zach
@@ -150,6 +151,7 @@ presence_absence_df_filtered = subset(presence_absence_df_filtered, presence_abs
 
 # Exclude most of the "zero" species
 species_ones_to_keep = presence_absence_df_filtered[presence_absence_df_filtered$Possible_assignements == "1",2]
+
 species_to_keep = c(species_zeros_to_keep, species_ones_to_keep)
 
 presence_absence_df_filtered = subset(presence_absence_df_filtered, presence_absence_df_filtered$Species %in% species_to_keep )
@@ -173,16 +175,42 @@ speciestree_prdm9$node.label<-NULL
 mean_bl = 0.1/mean(speciestree_prdm9$edge.length)
 median_bl = 0.1/median(speciestree_prdm9$edge.length)
 
+
+#### Re-doing presence and absence, tree and PRDM9 data
+uncertain_species = c("Eptesicus_fuscus", "Myotis_lucifugus", "Myotis_davidii", "Gopherus_evgoodei", "Cavia_porcellus", "Denticeps_clupeoides", "Phocoena_sinus", "Saimiri_boliviensis", "Callorhinchus_milii", "Erpetoichthys_calabaricus")
+                   
+#"Trachemys scripta elegans") -> I couldn't find the RNAseq classification for this species
+
+species_to_keep_2 = c(row.names(presence_absence_df_filtered), uncertain_species)
+
+presence_absence_df_filtered = read.csv("~/Dropbox/PRDM9_evolution_paper/Simulations/data/blast_results_presence_absence_genes_all_339_combined_identified_domains_metadata.csv", sep=",", row.names = 1, stringsAsFactors = FALSE)
+
+presence_absence_df_filtered = subset(presence_absence_df_filtered, presence_absence_df_filtered$Species %in% species_to_keep_2)
+
+# Exclude it from the species tree also
+#read species tree:
+speciestree_prdm9_old<-read.newick(file="~/Dropbox/PRDM9_evolution_paper/Simulations/data/species_tree_339_changed_replacements_to_old_names.nwk")
+speciestree_prdm9 = keep.tip(speciestree_prdm9_old, presence_absence_df_filtered$Species)
+
+# Checking if the tip labels differ 
+setdiff(speciestree_prdm9$tip.label, row.names(presence_absence_df_filtered))
+setdiff(row.names(presence_absence_df_filtered),speciestree_prdm9$tip.label)
+
+# Emptying nodes names
+speciestree_prdm9$node.label<-NULL
 #prdm9 = presence_absence_df_filtered$Possible_assignements
 #names(prdm9) <- presence_absence_df_filtered$Species
-write.tree(speciestree_prdm9,  "~/Dropbox/PRDM9_evolution_paper/species_tree_174_3species_per_zero_calls.nw")
+
+write.tree(speciestree_prdm9,  "~/Dropbox/PRDM9_submission/Main_figures/Figure3/species_tree_184_3species_per_zero_calls_some_uncertain_included.nw")
+write.csv(presence_absence_df_filtered, "~/Dropbox/PRDM9_submission/Main_figures/Figure3/blast_results_presence_absence_genes_all_184_combined_identified_domains_metadata.csv")
+
 Bayestraits_run <- function(model="XY", tries, pres_abs=presence_absence_df_filtered, tree=speciestree_prdm9, scaling_factor=mean_bl, max_rate=100, gain_rate, prdm9_status=prdm9, pruning=F, zero_incomplete=FALSE, species_root="Petromyzon_marinus Callorhinchus_milii"){
   results_final = NULL
   not_binary = NULL
   indexing = NULL
   genes = colnames(pres_abs)[6:length(pres_abs)]
   
-  species_root = toString(speciestree_prdm9$tip.label, collapse = " ")
+  species_root = toString(tree$tip.label, collapse = " ")
   ##########################################
   # Models transitions (Q's)
   ##########################################
@@ -198,7 +226,7 @@ Bayestraits_run <- function(model="XY", tries, pres_abs=presence_absence_df_filt
   # here we are allowing the root to be or (1,1) : both genes presents or 1,0: at least prdm9 is present
   "Fossil Node AncNode 15", 
   "MLTol 0.0000000000000000000001",
-  "mltries 50",
+  "mltries 100",
   paste("ScaleTrees", scaling_factor))
   
   ################################
@@ -209,7 +237,7 @@ Bayestraits_run <- function(model="XY", tries, pres_abs=presence_absence_df_filt
   paste("AddTag AncNode", species), 
   "Fossil Node AncNode 15",
   "MLTol 0.0000000000000000000001",
-  "mltries 10",
+  "mltries 100",
   paste("ScaleTrees", scaling_factor))
   
   ################################
@@ -238,47 +266,70 @@ Bayestraits_run <- function(model="XY", tries, pres_abs=presence_absence_df_filt
   
   #genes = c("ZCWPW1", "ZCWPW2")
   for(i in genes){
-    #i="ZCWPW1"
+    #i="ZCWPW2"
     gene2 = pres_abs[,i]
     print(i)
     names(gene2) = row.names(pres_abs)
     indexing = indexing + 1
             
     # Ordering the presence and absence based on prdm9 order!
-    gene_df = as.data.frame(cbind(prdm9_status, gene2 = gene2[names(prdm9_status)]), stringsAsFactors = FALSE)
-    gene_df$species = rownames(gene_df) 
+    prdm9_status = as.data.frame(prdm9_status)
+    prdm9_status$species = rownames(prdm9_status)
+    gene2 = as.data.frame(gene2)
+    gene2$species = rownames(gene2)
+    
+    gene_df = merge(prdm9_status, gene2, by.x="species", by.y="species", all.y = T)
+    rownames(gene_df) <- gene_df$species
+    
+    #gene_df = as.data.frame(cbind(prdm9_status, gene2 = gene2[names(prdm9_status)]), stringsAsFactors = FALSE)
+    #gene_df$species = rownames(gene_df) 
     
     #gene_df["Callorhinchus_milii", 1] <- 0  
     
     # Making doubtable calls NA's
     if(zero_incomplete == TRUE){
     #gene_df["Callorhinchus_milii", 1] <- 0  
-    gene_df["Arvicanthis_niloticus", 1] <- 1 # mammal
-    gene_df["Orycteropus_afer", 1] <- 1 # mammal
-    gene_df["Rhincodon_typus", 1] <- 0
-    gene_df["Amblyraja_radiata", 1] <- 0
-    gene_df["Acipenser_ruthenus", 1] <- 0
-    gene_df["Chanos_chanos", 1] <- 0
-    gene_df["Gadus_morhua", 1] <- 0
-    gene_df["Salmo_trutta", 1] <- 0
-    gene_df["Pangasianodon_hypophthalmus", 1] <- 0
-    gene_df["Paramormyrops_kingsleyae", 1] <- 0
-    gene_df["Monodelphis_domestica", 1] <- 1
+    gene_df["Arvicanthis_niloticus", 2] <- 1 # mammal
+    gene_df["Orycteropus_afer", 2] <- 1 # mammal
+    gene_df["Rhincodon_typus", 2] <- 0
+    gene_df["Amblyraja_radiata", 2] <- 0
+    gene_df["Acipenser_ruthenus", 2] <- 0
+    gene_df["Chanos_chanos", 2] <- 0
+    gene_df["Gadus_morhua", 2] <- 0
+    gene_df["Salmo_trutta", 2] <- 0
+    gene_df["Pangasianodon_hypophthalmus", 2] <- 0
+    gene_df["Paramormyrops_kingsleyae", 2] <- 0
+    #gene_df["Monodelphis_domestica", 2] <- 1
+    #gene_df["Monodelphis_domestica", 2] <- 1
     print(gene_df)
     }
     if(zero_incomplete == FALSE){
     #gene_df["Callorhinchus_milii", 1] <- "-"  
-    gene_df["Arvicanthis_niloticus", 1] <- 1
-    gene_df["Orycteropus_afer", 1] <- 1
-    gene_df["Rhincodon_typus", 1] <- "-"
-    gene_df["Amblyraja_radiata", 1] <- "-"
-    gene_df["Acipenser_ruthenus", 1] <- "-"
-    gene_df["Chanos_chanos", 1] <- "-"
-    gene_df["Gadus_morhua", 1] <- "-"
-    gene_df["Salmo_trutta", 1] <- "-"
-    gene_df["Pangasianodon_hypophthalmus", 1] <- "-"
-    gene_df["Paramormyrops_kingsleyae", 1] <- "-"
-    gene_df["Monodelphis_domestica", 1] <- 0
+    gene_df["Arvicanthis_niloticus", 2] <- 1
+    gene_df["Orycteropus_afer", 2] <- 1
+    gene_df["Rhincodon_typus", 2] <- "-"
+    gene_df["Amblyraja_radiata", 2] <- "-"
+    gene_df["Acipenser_ruthenus", 2] <- "-"
+    gene_df["Chanos_chanos", 2] <- "-"
+    gene_df["Gadus_morhua", 2] <- "-"
+    gene_df["Salmo_trutta", 2] <- "-"
+    gene_df["Pangasianodon_hypophthalmus", 2] <- "-"
+    gene_df["Paramormyrops_kingsleyae", 2] <- "-"
+    gene_df["Monodelphis_domestica", 2] <- 0
+    
+    
+    # Other species that we are not certain about their PRDM9 values
+    gene_df["Eptesicus_fuscus", 2] <- "-"
+    gene_df["Myotis_lucifugus", 2] <- "-"
+    gene_df["Myotis_davidii", 2] <- "-"
+    gene_df["Gopherus_evgoodei", 2] <- "-"
+    gene_df["Cavia_porcellus", 2] <- "-"
+    gene_df["Denticeps_clupeoides", 2] <- "-"
+    gene_df["Phocoena_sinus", 2] <- "-"
+    gene_df["Saimiri_boliviensis", 2] <- "-"
+    gene_df["Callorhinchus_milii", 2] <- "-"
+    gene_df["Erpetoichthys_calabaricus",2] <- "-"
+    #gene_df["Trachemys scripta elegans", 1] <- "-"
     }
     
     ### Pruning the gene so we have both 
@@ -299,7 +350,7 @@ Bayestraits_run <- function(model="XY", tries, pres_abs=presence_absence_df_filt
     # Check 2: 
     # Checking if the gene is variable
     binary = TRUE
-    if(sum(as.numeric(gene_df[,2])) == nrow(gene_df)){
+    if(sum(as.numeric(gene_df[,3])) == nrow(gene_df)){
       print("present in all")
       binary = FALSE
       not_binary[indexing] = gene2
@@ -310,10 +361,10 @@ Bayestraits_run <- function(model="XY", tries, pres_abs=presence_absence_df_filt
     if(binary == TRUE){
       print(setdiff(tree$tip.label, new_tree$tip.label))
               
-      colnames(gene_df) <- c("prdm9", "gene2", "species")
+      colnames(gene_df) <- c("species", "prdm9", "gene2")
         
       # reordering the dataframe
-      gene_df = gene_df[ ,c(3, 1, 2)]
+      #gene_df = gene_df[ ,c(3, 1, 2)]
         
       # emptying the node label names (otherwise the software complains)      
       new_tree$node.label<-NULL
@@ -442,7 +493,7 @@ p = df$P.value
 #library("devtools")
 #install_github("jdstorey/qvalue")
 library(qvalue)
-qobj <- qvalue(p = p, fdr.level = 0.1, lfdr.out = T)
+qobj <- qvalue(p = p, fdr.level = 0.5, lfdr.out = F)
 
 qvalues <- qobj$qvalues
 pi0 <- qobj$pi0
@@ -456,7 +507,7 @@ hist(qobj)
 plot(qobj)
 
 # Max false discovery rate when calling p-values significant at a certain level
-max(qvalues[qobj$pvalues <= 0.004])
+max(qvalues[qobj$pvalues <= 0.05])
 
 ####
 # Q-Q plots
@@ -474,7 +525,7 @@ p1 <- ggplot(df, aes(x=expected, y=observed)) + theme_bw() + geom_abline(interce
   xlab(expression(paste("Expected ", -log[10](p)))) +  
   ylab(expression(paste("Observed ", -log[10](p)))) +
   geom_point(aes(color = significant)) +
-  scale_color_manual(values = c("black", "red")) +
+  scale_color_manual(values = c("black", "red", "grey")) +
   theme_bw(base_size = 12) + theme(legend.position = "bottom") +
   geom_text_repel(
     data = subset(df, P.value < 0.05),
