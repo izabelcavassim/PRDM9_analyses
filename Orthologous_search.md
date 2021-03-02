@@ -79,8 +79,8 @@ done
 ```
 Blast candidates against each species protein sequence
 -----------------------------
-workflow_prdm9_candidates.py
-combining_prdm9_blast_results.py
+* workflow_prdm9_candidates.py !!!!!!!!!!!! include the clean one
+* combining_prdm9_blast_results.py
 
 
 Identifying the domain structures of each protein sequence
@@ -98,14 +98,16 @@ awk -v size=3900 -v pre=Batch_candidates -v pad=5 '
 
 Building the phylogenetic tree
 -----------------------------
-To evaluate evidence for co-evolution between PRDM9 and the meiosis related genes, we need a high quality phylogenetic tree for diverse vertebrate groups. Evolutionary information on species divergence times and relationships were obtained using the TimeTree resource [http://timetree.org/; Kumar et al., 2017, accessed date]. XX out of the XX species were not present in this database. For these species, we used information from a close relative present in the database to determine their appropriate placement in the phylogenetic tree as follow:
+To evaluate evidence for co-evolution between PRDM9 and the meiosis related genes among vertebrates, we need a high quality phylogenetic tree. Evolutionary information on species divergence times and relationships were obtained using the TimeTree resource [http://timetree.org/; Kumar et al., 2017, accessed date]. Forty species out of the 379 species we considered were not present in this database. For these species, we used information from a close relative present in the database to determine their appropriate placement in the phylogenetic tree as follow:
 ```
+Cebus imitator ----------> Cebus capucinus
 Rhincodon typus (replaced with Ginglymostoma cirratum)
 Paramormyrops kingsleyae (replaced with Paramormyrops gabonensis)
 Oreochromis aureus (replaced with Oreochromis tanganicae)
 Cynoglossus semilaevis (replaced with Cynoglossus lingua)
 Paralichthys olivaceus (replaced with Paralichthys dentatus)
 Etheostoma spectabile (replaced with Etheostoma caeruleum)
+Etheostoma cragini (replaced with Etheostoma pallididorsum)
 Notolabrus celidotus (replaced with Notolabrus gymnogenis)
 Periophthalmus magnuspinnatus (replaced with Periophthalmus argentilineatus)
 Thalassophryne amazonica (replaced with Opsanus tau)
@@ -117,20 +119,28 @@ Apteryx mantelli (replaced with Apteryx australis)
 Chiroxiphia lanceolata (replaced with Chiroxiphia caudata)
 Gopherus evgoodei (replaced with Gopherus agassizii)
 Tupaia chinensis (replaced with Tupaia glis)
-Austrofundulus limnaeus (no substitute found) ------> Nothobranchius fuscotaeniatus
-Poecilia latipinna (no substitute found) --------> Poecilia vivipara
-Astatotilapia calliptera (no substitute found) -------> Copadichromis virginalis
-Neophocaena asiaeorientalis (no substitute found) ------> Phocoena dioptrica
-Oryzias melastigma (no substitute found) -----> Oryzias luzonensis
-Poecilia formosa (no substitute found) -------> Poecilia butleri
-Oreochromis niloticus (no substitute found) -------> Tilapia sparrmanii
-Kryptolebias marmoratus (no substitute found) -------> Fundulus heteroclitus
-Tinamus guttatus (no substitute found) ----> Tinamus major
-Strigops habroptila (no substitute found) -----> Probosciger aterrimus
-Corvus cornix (no substitute found) ------> Corvus woodfordi
-Bos indicus x Bos taurus (no substitute found)
-Canis lupus familiaris -----> Canis lupus
-Neomonachus schauinslandi -----> Monachus schauinslandi
-Parambassis ranga --------> Pseudambassis_ranga
-Antrostomus carolinensis --------> Caprimulgus_carolinensis
+Corvus cornix (no substitute found) ------------> Corvus_woodfordi
+Astatotilapia calliptera (no substitute found) ------------> Copadichromis_virginalis
+Oreochromis niloticus (no substitute found) -------------> Pungu_maclareni
+Strigops habroptila (no substitute found) ---------------> Probosciger_aterrimus
+Tinamus guttatus (no substitute found) ----------------> Tinamus_major
+Poecilia formosa (no substitute found) ----------------> Poecilia_butleri
+Kryptolebias marmoratus (no substitute found) ----------------> Nothobranchius_virgatus
+Oryzias melastigma (no substitute found) -------------------> Oryzias_luzonensis
+Neophocaena asiaeorientalis (no substitute found) --------------> Phocoena_phocoena
+Austrofundulus limnaeus (no substitute found) ----------------> Nothobranchius_fuscotaeniatus
+Nematolebias whitei (no substitute found) -----------> Nothobranchius thierryi
+Hippoglossus stenolepis (no substitute found) -----------------> Hippoglossoides_elassodon
+Poecilia latipinna (no substitute found) --------------------> Poecilia_vivipara
+Tachysurus fulvidraco ---->  Leiocassis longirostris
+Astyanax mexicanus (replaced with Hollandichthys multifasciatus)
+Microcaecilia unicolor (replaced with Microcaecilia sp. PZ-2009)
+Python bivittatus (replaced with Python molurus)
+Apteryx mantelli (replaced with Apteryx australis)
+Chiroxiphia lanceolata (replaced with Chiroxiphia caudata)
+Gopherus evgoodei (replaced with Gopherus agassizii)
+Tupaia chinensis (replaced with Tupaia glis)
 ```
+
+To plot the phylogenetic tree we used the software itool https://itol.embl.de/.
+
