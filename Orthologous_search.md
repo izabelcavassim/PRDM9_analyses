@@ -81,7 +81,10 @@ done
 
 Blast candidates against each species protein sequence
 -----------------------------
-* [blasting_prdm9_candidates.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/blasting_prdm9_candidates.py) !!!!!!!!!!!! include the clean one
+The blast exercise here is similar to that for detecting PRDM9 in the de novo transcriptomes. The script is very similar and is found here:
+* [blasting_prdm9_candidates.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/blasting_prdm9_candidates.py)
+
+This script would give dataframes for each species. The following script would build the presence and absence matrix all species and genes.
 * [combining_prdm9_blast_results.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/combining_prdm9_blast_results.py)
 
 
