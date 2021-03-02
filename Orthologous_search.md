@@ -44,7 +44,7 @@ Exons were further parsed in order to have headers matching with the species tre
 Downloading the Refseq protein sequences from NCBI
 -----------------------------
 First downloaded the species present in each of the vertabrates directories.
-Extra_genomes_02_06_20_mammalian_vertebrates.txt contain the species and the directory of interest:
+[Extra_genomes_02_06_20_mammalian_vertebrates.txt](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/data/Extra_genomes_02_06_20_mammalian_vertebrates.txt) contain the species and the directory of interest:
 
 ```
 Acinonyx_jubatus/latest_assembly_versions/
@@ -55,6 +55,7 @@ Arvicanthis_niloticus/latest_assembly_versions/
 .
 .
 ```
+The file [Extra_genomes_02_06_20_other_vertebrates.txt](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/data/Extra_genomes_02_06_20_other_vertebrates.txt) contains the other non-mammalian species.
 
 ``` bash
 # Mammalian vertebrate species
@@ -77,9 +78,10 @@ cat Extra_genomes_02_06_20_other_vertebrates.txt | while read p;
   mv ${firstline::-1}_protein.faa.gz ${p%%/*}_protein.faa.gz  
 done
 ```
+
 Blast candidates against each species protein sequence
 -----------------------------
-* [blasting_prdm9_candidates.py] !!!!!!!!!!!! include the clean one
+* [blasting_prdm9_candidates.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/blasting_prdm9_candidates.py) !!!!!!!!!!!! include the clean one
 * [combining_prdm9_blast_results.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/combining_prdm9_blast_results.py)
 
 
