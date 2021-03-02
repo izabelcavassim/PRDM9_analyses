@@ -98,7 +98,7 @@ awk -v size=3900 -v pre=Batch_candidates -v pad=5 '
 
 Building the phylogenetic tree
 -----------------------------
-To evaluate evidence for co-evolution between PRDM9 and the meiosis related genes among vertebrates, we need a high quality phylogenetic tree. Evolutionary information on species divergence times and relationships were obtained using the TimeTree resource [http://timetree.org/; Kumar et al., 2017, accessed date]. Forty species out of the 379 species we considered were not present in this database. For these species, we used information from a close relative present in the database to determine their appropriate placement in the phylogenetic tree as follow:
+To evaluate evidence for co-evolution between PRDM9 and the meiosis related genes among vertebrates, we need a high quality phylogenetic tree. Evolutionary information on species divergence times and relationships were obtained using the TimeTree resource [http://timetree.org/; Kumar et al., 2017, accessed date]. 32 out of the 379 species we considered were not present in this database. For these species, we used information from a close relative present in the database to determine their appropriate placement in the phylogenetic tree as follow:
 ```
 Cebus imitator ----------> Cebus capucinus
 Rhincodon typus (replaced with Ginglymostoma cirratum)
@@ -132,15 +132,11 @@ Austrofundulus limnaeus (no substitute found) ----------------> Nothobranchius_f
 Nematolebias whitei (no substitute found) -----------> Nothobranchius thierryi
 Hippoglossus stenolepis (no substitute found) -----------------> Hippoglossoides_elassodon
 Poecilia latipinna (no substitute found) --------------------> Poecilia_vivipara
-Tachysurus fulvidraco ---->  Leiocassis longirostris
-Astyanax mexicanus (replaced with Hollandichthys multifasciatus)
-Microcaecilia unicolor (replaced with Microcaecilia sp. PZ-2009)
-Python bivittatus (replaced with Python molurus)
-Apteryx mantelli (replaced with Apteryx australis)
-Chiroxiphia lanceolata (replaced with Chiroxiphia caudata)
-Gopherus evgoodei (replaced with Gopherus agassizii)
-Tupaia chinensis (replaced with Tupaia glis)
 ```
 
-To plot the phylogenetic tree we used the software itool https://itol.embl.de/.
+To plot the phylogenetic tree we used the software itool https://itol.embl.de/. The final species tree with original names is found at: species_tree_379_classification_09_03_21.nwk
+
+Prunning the zero branches
+-----------------------------
+Because polytomies (zero branches along the tree) can affect the phylogenetic independent constrast analyses, we pruned the tree such that we mantained the same number of PRDM9 transitions. The pruning script is found at: remove.zero.branches.R 
 
