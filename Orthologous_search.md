@@ -93,7 +93,8 @@ Identifying the domain structures within each protein sequence
 To characterize the domain architecture for each sequence in each species we made use of the Conserved Domain Database(Marchler-Bauer et al., 2005). There are two ways one can submit their fasta sequences to the database. 
 * Through python request library. The following code exemplifies how one could do it: 
 
-CDD_submission.py
+[CDD_submission.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/CDD_submission.py)
+
 * Or through the CDD [website](https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi) using their Batch CD-Search.  
 The Batch CD-Search accepts only protein sequences. The maximal number of queries per request is 4000.
 The following code would split your concatenated fasta file (with all the sequences you want to describe domains: all_genes_combined.fasta) in subset fasta files of 3900 size:
