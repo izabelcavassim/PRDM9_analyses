@@ -37,7 +37,7 @@ done < knownCanonical.exonNuc.fa
 Searching at the 100_way_alignment domains
 ----------------------------
 ``` python
-searchin_100_alignment_domains.py
+searching_100_alignment_domains.py
 ``` 
 Exons were further parsed in order to have headers matching with the species tree headers (for that we used a metadata file available at scripts/metadata2.csv). Exons belonging to the same gene were combined into a singular fasta file using the script available at scripts/parsing_UCSC_data.py. This gave us a total of **21,521** genes to work with.
 
