@@ -12,6 +12,6 @@ Main analyzes are:
 * The folder *data* includes some of the data used or generated for the PIC analyses. Other files are found the following repository https://doi.org/10.6084/m9.figshare.11672685
 
 * RNAseq data of 2 fish species and 2 reptiles (fastq files):
-Is Publicly available at NCBI under the NCBI BioProject: PRJNA605699.
+Is Publicly available at NCBI under the [NCBI BioProject: PRJNA605699](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA605699).
 
 For more information or data access please do not hesitate to contact me! izabelcavassim at g mail . com
