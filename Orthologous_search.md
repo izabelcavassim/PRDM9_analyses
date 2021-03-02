@@ -39,7 +39,7 @@ Searching at the 100_way_alignment domains
 ``` python
 python searching_100_alignment_domains.py
 ``` 
-Exons were further parsed in order to have headers matching with the species tree headers (for that we used a metadata file available at scripts/metadata2.csv). Exons belonging to the same gene were combined into a singular fasta file using the script available at [parsing_UCSC_data.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/parsing_UCSC_data.py). This gave us a total of **21,521** genes to work with.
+Exons were further parsed in order to have headers matching with the species tree headers (for that we used a metadata file available at scripts/metadata2.csv). Exons belonging to the same gene were combined into a singular fasta file using the script available at [parsing_UCSC_data.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/parsing_UCSC_data.py). This gave us a total of **21,521** genes to work with.
 
 Downloading the Refseq protein sequences from NCBI
 -----------------------------
