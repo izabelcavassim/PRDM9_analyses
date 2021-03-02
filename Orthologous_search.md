@@ -83,22 +83,22 @@ Blast candidates against each species protein sequence
 * combining_prdm9_blast_results.py
 
 
-Identifying the domain structures of each protein sequence
+Identifying the domain structures within each protein sequence
 -----------------------------
 To characterize the domain architecture for each sequence in each species we made use of the Conserved Domain Database(Marchler-Bauer et al., 2005). There are two ways one can submit their fasta sequences to the database. 
 * Through python request library. The following code exemplifies how one could do it: 
 
 CDD_submission.py
-* Or through the CDD [website](https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi). The batch  
-Splitting files to Batch CD-Search. The Batch CD-Search accepts only protein sequences. The maximal number of queries per request is 4000.
-The following code would be able to split your concatenated fasta file (with all the sequences you want to describe domains: all_genes_combined.fasta) in subset fasta files of 3900 size:
+* Or through the CDD [website](https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi) using their Batch CD-Search.  
+The Batch CD-Search accepts only protein sequences. The maximal number of queries per request is 4000.
+The following code would split your concatenated fasta file (with all the sequences you want to describe domains: all_genes_combined.fasta) in subset fasta files of 3900 size:
 ``` bash
 awk -v size=3900 -v pre=Batch_candidates -v pad=5 '
    /^>/ { n++; if (n % size == 1) { close(fname); fname = sprintf("%s.%0" pad "d", pre, n) } }
    { print >> fname }
 ' all_genes_combined.fasta
 ```
-You would need to submit each of your subsets manually. 
+You would need to submit each of your subsets manually in the website. 
 
 Building the phylogenetic tree
 -----------------------------
