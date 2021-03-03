@@ -1,7 +1,7 @@
 Introduction
 ============
 
-This repository was created to outline the analyses described in the paper Cavassim et al., 2020 of which we extracted all the RefSeq data available and searched for genes coevolving with PRDM9. Multiple steps until the final results were executed and will be described in their chronological order here. 
+This repository was created to outline the analyses described in the paper Cavassim et al., 2020 of which we extracted all the RefSeq data available for vertebrates (July 2020) and searched for genes coevolving with PRDM9. Multiple steps until the final results were executed and will be described in their chronological order here. 
 Main analyzes are: 
 
 1. Building confident calls for PRDM9. The details are described in [Baker et al., 2017](https://elifesciences.org/articles/24133)
