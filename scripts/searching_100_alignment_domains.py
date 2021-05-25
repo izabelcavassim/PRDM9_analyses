@@ -57,6 +57,8 @@ for index, row in domains_place.iterrows():
 	gene_ = gene_.split(">")[1]
 	gene_ = gene_.split("_")[0]
 	superfamily = row['Short name']
+	accession = row['Accession']
+	superfamily = superfamily + "_" + accession
 	species = row['Query']
 	from_ = row['From']
 	to_ = row['To']
@@ -74,17 +76,17 @@ for index, row in domains_place.iterrows():
 		len_ns = sequence.count('-')
 		#print(sequence)
 		average_completness.append(len_ns/len_seq)
-	average_completness = np.mean(average_completness)
+	average_completness = np.max(average_completness)
 	results.append([gene_ , superfamily, average_completness, len(gene_parsed.keys())])
 
 dataframe_results = pd.DataFrame(results) 
 dataframe_results.columns = ['Gene', 'Domain', 'Average_completeness', 'Num_seqs']
-dataframe_results.to_csv("Candidates_incompleteness_domain.csv", index=False)
+dataframe_results.to_csv("Candidates_incompleteness_domain_test.csv", index=False)
 print(dataframe_results)
 test = dataframe_results[['Gene','Num_seqs', 'Average_completeness']].groupby('Gene').mean()
 test = test.sort_values('Num_seqs')
-test.to_csv("Candidates_mean_incompleteness_domain.csv", index=True)
-print(test[(test['Num_seqs']>=97) & (test['Average_completeness']<=0.05)].to_string())
+test.to_csv("Candidates_max_incompleteness_domain_test.csv", index=True)
+print(test[(test['Num_seqs']>=100) & (test['Average_completeness']<=0.05)].to_string())
 print(test.to_string())
 	#if ("PWWP" in domain) or ("MSH6_like" in domain):
 	#if ("zf-CW" in domain):
