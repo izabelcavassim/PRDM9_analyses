@@ -5,9 +5,14 @@ This repository was created to outline the analyses described in the paper Cavas
 Main analyzes are: 
 
 1. Building confident calls for PRDM9. The details are described in [Baker et al., 2017](https://elifesciences.org/articles/24133)
-2. [RNAseq_analyses.md](./RNAseq_analyses.md) It contains the script used to verify PRDM9 and candidate gene calls using RNAseq data.
-3. [Orthologous_search.md](./Orthologous_search.md) It contains scripts used to identify orthologs of candidate co-evolving meiosis genes across vertebrates (339 species). 
-4. [PIC.Rmd](./PIC.Rmd) It contains the R script used for the phylogenetic tests between two binary traits: PRDM9 completeness and the presence/absence of candidate genes (139).
+2. [RNAseq_analyses.md](./RNAseq_analyses.md) contains the script used to verify PRDM9 and candidate gene calls using RNAseq data.
+3. [Orthologous_search.md](./Orthologous_search.md) contains scripts used to identify orthologs of candidate co-evolving meiosis genes across vertebrates (339 species). 
+4. [PIC.Rmd](./PIC.Rmd) contains the R script used for the phylogenetic tests between two binary traits: PRDM9 completeness and the presence/absence of candidate genes (139).
+5. [XXXXXXXXXXXXXXX] contains the scripts and files for the ZCWPW2 conservation of residues analyses.
+6. [XXXXXXXXXXXXXXX] contains the scripts and files for the dN/dS analyses. 
+
+
+* The folder *Figures* includes the data and scripts used for reproducing each main figure of the paper.
 
 * The folder *data* includes some of the data used or generated for the PIC analyses. Other files are found the following repository https://doi.org/10.6084/m9.figshare.11672685
 
