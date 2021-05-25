@@ -39,12 +39,12 @@ Searching at the 100_way_alignment domains
 ``` python
 python searching_100_alignment_domains.py
 ``` 
-Exons were further parsed in order to have headers matching with the species tree headers (for that we used a metadata file available at scripts/metadata2.csv). Exons belonging to the same gene were combined into a singular fasta file using the script available at scripts/parsing_UCSC_data.py. This gave us a total of **21,521** genes to work with.
+Exons were further parsed in order to have headers matching with the species tree headers (for that we used a metadata file available at scripts/metadata2.csv). Exons belonging to the same gene were combined into a singular fasta file using the script available at [parsing_UCSC_data.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/parsing_UCSC_data.py). This gave us a total of **21,521** genes to work with.
 
 Downloading the Refseq protein sequences from NCBI
 -----------------------------
 First downloaded the species present in each of the vertabrates directories.
-Extra_genomes_02_06_20_mammalian_vertebrates.txt contain the species and the directory of interest:
+[Extra_genomes_02_06_20_mammalian_vertebrates.txt](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/data/Extra_genomes_02_06_20_mammalian_vertebrates.txt) contain the species and the directory of interest:
 
 ```
 Acinonyx_jubatus/latest_assembly_versions/
@@ -55,6 +55,7 @@ Arvicanthis_niloticus/latest_assembly_versions/
 .
 .
 ```
+The file [Extra_genomes_02_06_20_other_vertebrates.txt](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/data/Extra_genomes_02_06_20_other_vertebrates.txt) contains the other non-mammalian species.
 
 ``` bash
 # Mammalian vertebrate species
@@ -77,9 +78,13 @@ cat Extra_genomes_02_06_20_other_vertebrates.txt | while read p;
   mv ${firstline::-1}_protein.faa.gz ${p%%/*}_protein.faa.gz  
 done
 ```
+
 Blast candidates against each species protein sequence
 -----------------------------
-* [blasting_prdm9_candidates.py] !!!!!!!!!!!! include the clean one
+The blast exercise here is similar to that for detecting PRDM9 in the de novo transcriptomes. The script is very similar and is found here:
+* [blasting_prdm9_candidates.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/blasting_prdm9_candidates.py)
+
+This script would give dataframes for each species. The following script would build the presence and absence matrix for all species and genes.
 * [combining_prdm9_blast_results.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/combining_prdm9_blast_results.py)
 
 
@@ -88,7 +93,8 @@ Identifying the domain structures within each protein sequence
 To characterize the domain architecture for each sequence in each species we made use of the Conserved Domain Database(Marchler-Bauer et al., 2005). There are two ways one can submit their fasta sequences to the database. 
 * Through python request library. The following code exemplifies how one could do it: 
 
-CDD_submission.py
+[CDD_submission.py](https://github.com/izabelcavassim/PRDM9_analyses/blob/master/scripts/CDD_submission.py)
+
 * Or through the CDD [website](https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi) using their Batch CD-Search.  
 The Batch CD-Search accepts only protein sequences. The maximal number of queries per request is 4000.
 The following code would split your concatenated fasta file (with all the sequences you want to describe domains: all_genes_combined.fasta) in subset fasta files of 3900 size:
