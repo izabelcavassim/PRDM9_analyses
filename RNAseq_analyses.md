@@ -2,7 +2,7 @@ Introduction
 ============
 
 This document was created as a repository for the scripts used in the
-analysis of the PRDM9 paper (link to the preprint XXXXXXXXX).
+analysis of the PRDM9 paper (link to the preprint https://doi.org/10.1101/2021.06.08.447603).
 
 Data availability
 ===================
