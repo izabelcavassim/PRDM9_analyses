@@ -14,7 +14,7 @@ Main analyzes are:
 
 * The folder *Figures* includes the data and scripts used for reproducing each main figure of the paper.
 
-* The folder *data* includes some of the data used or generated for the PIC analyses. Other files are found the following repository https://doi.org/10.6084/m9.figshare.11672685
+* The folder *data* includes some of the data used or generated for the PIC analyses. Other files are found in the following repository https://doi.org/10.6084/m9.figshare.11672685
 
 * RNAseq data of 2 fish species and 2 reptiles (fastq files):
 Is Publicly available at NCBI under the [NCBI BioProject: PRJNA605699](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA605699).
